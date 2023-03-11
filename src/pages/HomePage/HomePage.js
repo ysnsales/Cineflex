@@ -9,14 +9,14 @@ export default function HomePage() {
     const [movies, setMovies] = useState([])
 
     useEffect(() => {
-        const promisemovies = axios.get("https://mock-api.driven.com.br/api/v8/cineflex/movies")
-         
-        promisemovies.then((response) => {
+        const promiseMovies = axios.get(`https://mock-api.driven.com.br/api/v8/cineflex/movies`)
+
+        promiseMovies.then((response) => {
             setMovies(response.data)
             console.log(response.data)
         })
 
-        promisemovies.catch((error) => {
+        promiseMovies.catch((error) => {
             console.log(error.response.data)
         })
     }, [])
@@ -26,14 +26,14 @@ export default function HomePage() {
             Selecione o filme
 
             <ListContainer>
-                    {movies.map((movie) => (
-                        <Link to={`sessoes/${movie.id}`}>
+                {movies.map((movie) => (
+                    <Link key={movie.id} to={`/sessoes/${movie.id}`}>
                         <MovieContainer>
-                            <img src={movie.posterURL} alt="poster"/>
+                            <img src={movie.posterURL} alt="poster" />
                         </MovieContainer>
-                        </Link>
-                    ))}
-                
+                    </Link>
+                ))}
+
 
             </ListContainer>
 

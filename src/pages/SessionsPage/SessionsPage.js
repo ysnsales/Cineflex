@@ -1,42 +1,55 @@
 import styled from "styled-components"
+import axios from "axios";
+import { useEffect, useState } from "react"
+import { useParams } from "react-router-dom"
+import { Link } from "react-router-dom"
 
 export default function SessionsPage() {
+    const [sessions, setSessions] = useState(null)
+    const { idFilme } = useParams()
+
+    useEffect(() => {
+        const promiseSession = axios.get(`https://mock-api.driven.com.br/api/v8/cineflex/movies/${idFilme}/showtimes`);
+
+        promiseSession.then((response) => {
+            setSessions(response.data)
+            console.log(response.data)
+        })
+    }, [])
+
+    if (sessions === null) {
+        return ("Carregando...")
+    }
 
     return (
         <PageContainer>
             Selecione o horário
+
             <div>
-                <SessionContainer>
-                    Sexta - 03/03/2023
-                    <ButtonsContainer>
-                        <button>14:00</button>
-                        <button>15:00</button>
-                    </ButtonsContainer>
-                </SessionContainer>
-
-                <SessionContainer>
-                    Sexta - 03/03/2023
-                    <ButtonsContainer>
-                        <button>14:00</button>
-                        <button>15:00</button>
-                    </ButtonsContainer>
-                </SessionContainer>
-
-                <SessionContainer>
-                    Sexta - 03/03/2023
-                    <ButtonsContainer>
-                        <button>14:00</button>
-                        <button>15:00</button>
-                    </ButtonsContainer>
-                </SessionContainer>
+                {sessions.days.map((session) => (
+                    
+                    <SessionContainer key={session.id}>
+                        {session.weekday} - {session.date}
+        
+                        <ButtonsContainer>
+                            {session.showtimes.map((show) => (
+                                <Link to={`/assentos/${show.id}`}>
+                                <button key={show.id}>{show.name}</button>
+                                </Link>
+                            ))}
+                        </ButtonsContainer>
+                        
+                    </SessionContainer>
+                    
+                ))}
             </div>
 
             <FooterContainer>
                 <div>
-                    <img src={"https://br.web.img2.acsta.net/pictures/22/05/16/17/59/5165498.jpg"} alt="poster" />
+                    <img src={sessions.posterURL} alt="poster" />
                 </div>
                 <div>
-                    <p>Tudo em todo lugar ao mesmo tempo</p>
+                    <p>{sessions.title}</p>
                 </div>
             </FooterContainer>
 
