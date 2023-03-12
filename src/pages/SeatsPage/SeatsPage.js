@@ -30,13 +30,13 @@ export default function SeatsPage(props) {
 
     function SelectSeat(isAvailable, id, name) {
         let newSelectedSeats = [...selectedSeats]
-        let newNameSeats= [...nameSeats]
+        let newNameSeats = [...nameSeats]
         if (!isAvailable) {
             alert("Esse assento não está disponível")
 
         } if (isAvailable && !selectedSeats.includes(id)) {
             setSelectedSeats([...selectedSeats, id])
-            setNameSeats([...nameSeats, name ])
+            setNameSeats([...nameSeats, name])
 
         } if (isAvailable && selectedSeats.includes(id)) {
             newSelectedSeats.splice(newSelectedSeats.indexOf(id), 1)
@@ -44,7 +44,7 @@ export default function SeatsPage(props) {
 
             newNameSeats.splice(newSelectedSeats.indexOf(name), 1)
             setNameSeats(newNameSeats)
-            
+
         }
         console.log(newNameSeats)
     }
@@ -58,10 +58,10 @@ export default function SeatsPage(props) {
             console.log(post)
 
             const promisePost = axios.post("https://mock-api.driven.com.br/api/v8/cineflex/seats/book-many", post)
-            promisePost.then(response => navigate("/sucesso", {state:{sessionsInfo:sessionsInfo, numbers:numbers, name:name, cpf:cpf,}}))
+            promisePost.then(response => navigate("/sucesso", { state: { sessionsInfo: sessionsInfo, numbers: numbers, name: name, cpf: cpf, } }))
 
         } else {
-            alert("não foi")
+            alert("Por favor, selecione o(s) assento(s).")
         }
 
     }
@@ -72,7 +72,7 @@ export default function SeatsPage(props) {
 
             <SeatsContainer>
                 {sessionsInfo.seats.map((seat) => (
-                    <SeatItem key={seat.id}
+                    <SeatItem data-test="seat" key={seat.id}
                         isAvailable={seat.isAvailable}
                         state={!seat.isAvailable ? "indisponivel" :
                             (selectedSeats.includes(seat.id) ? "selecionado" : "disponivel")}
@@ -99,10 +99,11 @@ export default function SeatsPage(props) {
 
             <form onSubmit={ReserveSeats}>
                 <FormContainer>
-                
+
 
                     Nome do Comprador:
                     <input
+                        data-test="client-name"
                         id="name"
                         type="text"
                         value={name}
@@ -112,19 +113,20 @@ export default function SeatsPage(props) {
 
                     CPF do Comprador:
                     <input
+                        data-test="client-cpf"
                         id="cpf"
                         type="number"
                         value={cpf}
                         onChange={e => setcpf(e.target.value)}
                         required
                         placeholder="Digite seu CPF..." />
-                
-                        <button type="submit">Reservar Assento(s)</button>
-                    
+
+                    <button data-test="book-seat-btn" type="submit">Reservar Assento(s)</button>
+
                 </FormContainer>
             </form>
 
-            <FooterContainer>
+            <FooterContainer data-test="footer">
                 <div>
                     <img src={sessionsInfo.movie.posterURL} alt="poster" />
                 </div>
