@@ -2,19 +2,20 @@ import styled from "styled-components"
 import axios from "axios";
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
-import { useAsyncError, useParams } from "react-router-dom"
+import { useParams } from "react-router-dom"
 import { Link } from "react-router-dom"
 
 export default function SeatsPage(props) {
 
     const [sessionsInfo, setSessionsInfo] = useState(null)
     const { idSessao } = useParams()
-    const [selectedSeats, setSelectedSeats]= useState([]);
+    const [selectedSeats, setSelectedSeats] = useState([]);
+    const [nameSeats, setNameSeats] = useState([])
 
     const [name, setName] = useState("")
     const [cpf, setcpf] = useState("")
     const navigate = useNavigate()
-   
+
     useEffect(() => {
         const promiseSeat = axios.get(`https://mock-api.driven.com.br/api/v8/cineflex/showtimes/${idSessao}/seats`);
 
@@ -27,31 +28,39 @@ export default function SeatsPage(props) {
         return ("Carregando...")
     }
 
-    function SelectSeat(isAvailable, id){
+    function SelectSeat(isAvailable, id, name) {
         let newSelectedSeats = [...selectedSeats]
-        if (!isAvailable){
+        let newNameSeats= [...nameSeats]
+        if (!isAvailable) {
             alert("Esse assento não está disponível")
 
-        }if (isAvailable  && !selectedSeats.includes(id)) {  
+        } if (isAvailable && !selectedSeats.includes(id)) {
             setSelectedSeats([...selectedSeats, id])
+            setNameSeats([...nameSeats, name ])
 
-        }if (isAvailable && selectedSeats.includes(id)){
+        } if (isAvailable && selectedSeats.includes(id)) {
             newSelectedSeats.splice(newSelectedSeats.indexOf(id), 1)
             setSelectedSeats(newSelectedSeats)
+
+            newNameSeats.splice(newSelectedSeats.indexOf(name), 1)
+            setNameSeats(newNameSeats)
+            
         }
+        console.log(newNameSeats)
     }
 
-    function ReserveSeats(e){
+    function ReserveSeats(e) {
         e.preventDefault()
-        if (selectedSeats.length!=0){
+        if (selectedSeats.length != 0) {
             const ids = selectedSeats;
+            const numbers = nameSeats;
             const post = { ids, name, cpf }
             console.log(post)
 
             const promisePost = axios.post("https://mock-api.driven.com.br/api/v8/cineflex/seats/book-many", post)
-            promisePost.then(response => navigate("/sucesso"))
-            
-        }else{
+            promisePost.then(response => navigate("/sucesso", {state:{sessionsInfo:sessionsInfo, numbers:numbers, name:name, cpf:cpf,}}))
+
+        } else {
             alert("não foi")
         }
 
@@ -63,11 +72,11 @@ export default function SeatsPage(props) {
 
             <SeatsContainer>
                 {sessionsInfo.seats.map((seat) => (
-                    <SeatItem key={seat.id} 
-                    isAvailable={seat.isAvailable}
-                    state={!seat.isAvailable ? "indisponivel" :
-                        (selectedSeats.includes(seat.id) ? "selecionado" : "disponivel")}
-                    onClick={() => SelectSeat(seat.isAvailable, seat.id)}
+                    <SeatItem key={seat.id}
+                        isAvailable={seat.isAvailable}
+                        state={!seat.isAvailable ? "indisponivel" :
+                            (selectedSeats.includes(seat.id) ? "selecionado" : "disponivel")}
+                        onClick={() => SelectSeat(seat.isAvailable, seat.id, seat.name)}
                     >{seat.name}</SeatItem>
                 ))}
             </SeatsContainer>
@@ -75,43 +84,44 @@ export default function SeatsPage(props) {
 
             <CaptionContainer>
                 <CaptionItem>
-                    <CaptionCircle state="selecionado"/>
+                    <CaptionCircle state="selecionado" />
                     Selecionado
-                </CaptionItem> 
+                </CaptionItem>
                 <CaptionItem>
-                    <CaptionCircle state="disponivel"/>
+                    <CaptionCircle state="disponivel" />
                     Disponível
                 </CaptionItem>
                 <CaptionItem>
-                    <CaptionCircle state="indisponivel"/>
+                    <CaptionCircle state="indisponivel" />
                     Indisponível
                 </CaptionItem>
             </CaptionContainer>
 
             <form onSubmit={ReserveSeats}>
-            <FormContainer>
+                <FormContainer>
                 
-                Nome do Comprador:
-                <input 
-                id="name"
-                type="text" 
-                value={name} 
-                onChange={e => setName(e.target.value)}
-                required 
-                placeholder="Digite seu nome..." />
 
-                CPF do Comprador:
-                <input 
-                id="cpf"
-                type="number" 
-                value={cpf} 
-                onChange={e => setcpf(e.target.value)}
-                required 
-                placeholder="Digite seu CPF..." />
+                    Nome do Comprador:
+                    <input
+                        id="name"
+                        type="text"
+                        value={name}
+                        onChange={e => setName(e.target.value)}
+                        required
+                        placeholder="Digite seu nome..." />
 
-                <button type="submit">Reservar Assento(s)</button>
+                    CPF do Comprador:
+                    <input
+                        id="cpf"
+                        type="number"
+                        value={cpf}
+                        onChange={e => setcpf(e.target.value)}
+                        required
+                        placeholder="Digite seu CPF..." />
                 
-            </FormContainer>
+                        <button type="submit">Reservar Assento(s)</button>
+                    
+                </FormContainer>
             </form>
 
             <FooterContainer>
@@ -171,11 +181,11 @@ const CaptionContainer = styled.div`
     margin: 20px;
 `
 const CaptionCircle = styled.div`
-    border:${props => props.state === "selecionado" ? "1px solid #0E7D71;" : 
-    (props.state === "disponivel" ? "1px solid #7B8B99;" : "1px solid #F7C52B;")};
+    border:${props => props.state === "selecionado" ? "1px solid #0E7D71;" :
+        (props.state === "disponivel" ? "1px solid #7B8B99;" : "1px solid #F7C52B;")};
 
-    background-color: ${props => props.state === "selecionado" ? "#1AAE9E;" : 
-    (props.state === "disponivel" ? "#C3CFD9;" : "#FBE192;")};
+    background-color: ${props => props.state === "selecionado" ? "#1AAE9E;" :
+        (props.state === "disponivel" ? "#C3CFD9;" : "#FBE192;")};
 
     height: 25px;
     width: 25px;
@@ -196,20 +206,20 @@ const SeatItem = styled.div`
     
     border: ${props => {
         if (!props.isAvailable) {
-            return("1px solid #F7C52B;")
-        }if (props.isAvailable && props.state === "disponivel") {
-            return("1px solid #808F9D;")
-        }if (props.isAvailable && props.state === "selecionado"){
-            return("1px solid #0E7D71;")
+            return ("1px solid #F7C52B;")
+        } if (props.isAvailable && props.state === "disponivel") {
+            return ("1px solid #808F9D;")
+        } if (props.isAvailable && props.state === "selecionado") {
+            return ("1px solid #0E7D71;")
         }
     }};
     background-color:  ${props => {
         if (!props.isAvailable) {
-            return("#FBE192;")
-        }if (props.isAvailable && props.state === "disponivel") {
-            return("#C3CFD9;")
-        }if (props.isAvailable && props.state === "selecionado"){
-            return("#1AAE9E;")
+            return ("#FBE192;")
+        } if (props.isAvailable && props.state === "disponivel") {
+            return ("#C3CFD9;")
+        } if (props.isAvailable && props.state === "selecionado") {
+            return ("#1AAE9E;")
         }
     }};
     
