@@ -7,7 +7,7 @@ export default function SuccessPage() {
 
 const location = useLocation();
 let sessionsInfo = location.state.sessionsInfo;
-let numbers = location.state.numbers;
+let numbers = location.state.ordNumbers;
 let name = location.state.name;
 let cpf = location.state.cpf
 

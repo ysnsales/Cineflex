@@ -27,7 +27,7 @@ export default function SeatsPage(props) {
         })
     }, [])
 
-    if (sessionsInfo === null) {
+    if (sessionsInfo === null || sessionsInfo.length === 0) {
         return ("Carregando...")
     }
 
@@ -39,7 +39,7 @@ export default function SeatsPage(props) {
 
         } if (isAvailable && !selectedSeats.includes(id)) {
             setSelectedSeats([...selectedSeats, id])
-            setNameSeats([...nameSeats, name])
+            setNameSeats([...nameSeats, Number(name)])
 
         } if (isAvailable && selectedSeats.includes(id)) {
             newSelectedSeats.splice(newSelectedSeats.indexOf(id), 1)
@@ -57,9 +57,13 @@ export default function SeatsPage(props) {
             const ids = selectedSeats;
             const numbers = nameSeats;
             const post = { ids, name, cpf }
+            const ordNumbers = numbers.sort(function(a,b){
+                if (a>b) {return 1};
+                if (a<b) {return -1};
+                return 0}) 
 
             const promisePost = axios.post("https://mock-api.driven.com.br/api/v8/cineflex/seats/book-many", post)
-            promisePost.then(response => navigate("/sucesso", { state: { sessionsInfo: sessionsInfo, numbers: numbers, name: name, cpf: cpf, } }))
+            promisePost.then(response => navigate("/sucesso", { state: { sessionsInfo: sessionsInfo, ordNumbers: ordNumbers, name: name, cpf: cpf, } }))
 
         } else {
             alert("Por favor, selecione o(s) assento(s).")
@@ -135,7 +139,7 @@ export default function SeatsPage(props) {
                 </div>
                 <div>
                     <p>{sessionsInfo.movie.title}</p>
-                    <p>{sessionsInfo.day.weekday} - {sessionsInfo.day.date}</p>
+                    <p>{sessionsInfo.day.weekday} - {sessionsInfo.name}</p>
                 </div>
             </FooterContainer>
 

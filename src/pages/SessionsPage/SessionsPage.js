@@ -17,7 +17,7 @@ export default function SessionsPage() {
         })
     }, [])
 
-    if (sessions === null) {
+    if (sessions === null || sessions.length === 0) {
         return ("Carregando...")
     }
 
