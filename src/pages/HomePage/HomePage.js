@@ -21,6 +21,10 @@ export default function HomePage() {
         })
     }, [])
 
+    if (movies === null || movies.length === 0) {
+        return(<div>"Carregando..."</div>)
+    }
+
     return (
         <PageContainer>
             Selecione o filme

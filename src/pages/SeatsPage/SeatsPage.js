@@ -1,20 +1,19 @@
-import styled from "styled-components"
+import styled from "styled-components";
 import axios from "axios";
-import { useEffect, useState } from "react"
-import { useNavigate } from "react-router-dom"
-import { useParams } from "react-router-dom"
-import { Link } from "react-router-dom"
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
-export default function SeatsPage(props) {
+export default function SeatsPage() {
 
-    const [sessionsInfo, setSessionsInfo] = useState(null)
-    const { idSessao } = useParams()
+    const [sessionsInfo, setSessionsInfo] = useState(null);
+    const { idSessao } = useParams();
     const [selectedSeats, setSelectedSeats] = useState([]);
-    const [nameSeats, setNameSeats] = useState([])
+    const [nameSeats, setNameSeats] = useState([]);
 
-    const [name, setName] = useState("")
-    const [cpf, setcpf] = useState("")
-    const navigate = useNavigate()
+    const [name, setName] = useState("");
+    const [cpf, setcpf] = useState("");
+    const navigate = useNavigate();
 
     useEffect(() => {
         const promiseSeat = axios.get(`https://mock-api.driven.com.br/api/v8/cineflex/showtimes/${idSessao}/seats`);
@@ -28,45 +27,46 @@ export default function SeatsPage(props) {
     }, [])
 
     if (sessionsInfo === null || sessionsInfo.length === 0) {
-        return ("Carregando...")
+        return (<div>"Carregando..."</div>)
     }
 
     function SelectSeat(isAvailable, id, name) {
-        let newSelectedSeats = [...selectedSeats]
-        let newNameSeats = [...nameSeats]
+        let newSelectedSeats = [...selectedSeats];
+        let newNameSeats = [...nameSeats];
         if (!isAvailable) {
             alert("Esse assento não está disponível")
 
         } if (isAvailable && !selectedSeats.includes(id)) {
-            setSelectedSeats([...selectedSeats, id])
-            setNameSeats([...nameSeats, Number(name)])
+            setSelectedSeats([...selectedSeats, id]);
+            setNameSeats([...nameSeats, Number(name)]);
 
         } if (isAvailable && selectedSeats.includes(id)) {
-            newSelectedSeats.splice(newSelectedSeats.indexOf(id), 1)
-            setSelectedSeats(newSelectedSeats)
+            newSelectedSeats.splice(newSelectedSeats.indexOf(id), 1);
+            setSelectedSeats(newSelectedSeats);
 
-            newNameSeats.splice(newSelectedSeats.indexOf(name), 1)
-            setNameSeats(newNameSeats)
+            newNameSeats.splice(newSelectedSeats.indexOf(name), 1);
+            setNameSeats(newNameSeats);
 
         }
     }
 
     function ReserveSeats(e) {
-        e.preventDefault()
+        e.preventDefault();
         if (selectedSeats.length != 0) {
             const ids = selectedSeats;
             const numbers = nameSeats;
             const post = { ids, name, cpf }
-            const ordNumbers = numbers.sort(function(a,b){
-                if (a>b) {return 1};
-                if (a<b) {return -1};
-                return 0}) 
+            const ordNumbers = numbers.sort(function (a, b) {
+                if (a > b) { return 1 };
+                if (a < b) { return -1 };
+                return 0
+            });
 
-            const promisePost = axios.post("https://mock-api.driven.com.br/api/v8/cineflex/seats/book-many", post)
-            promisePost.then(response => navigate("/sucesso", { state: { sessionsInfo: sessionsInfo, ordNumbers: ordNumbers, name: name, cpf: cpf, } }))
+            const promisePost = axios.post("https://mock-api.driven.com.br/api/v8/cineflex/seats/book-many", post);
+            promisePost.then(response => navigate("/sucesso", { state: { sessionsInfo: sessionsInfo, ordNumbers: ordNumbers, name: name, cpf: cpf, } }));
 
         } else {
-            alert("Por favor, selecione o(s) assento(s).")
+            alert("Por favor, selecione o(s) assento(s).");
         }
 
     }

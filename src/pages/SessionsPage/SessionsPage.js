@@ -5,20 +5,19 @@ import { useParams } from "react-router-dom"
 import { Link } from "react-router-dom"
 
 export default function SessionsPage() {
-    const [sessions, setSessions] = useState(null)
-    const { idFilme } = useParams()
+    const [sessions, setSessions] = useState(null);
+    const { idFilme } = useParams();
 
     useEffect(() => {
         const promiseSession = axios.get(`https://mock-api.driven.com.br/api/v8/cineflex/movies/${idFilme}/showtimes`);
 
         promiseSession.then((response) => {
-            setSessions(response.data)
-            console.log(response.data)
+            setSessions(response.data);
         })
     }, [])
 
     if (sessions === null || sessions.length === 0) {
-        return ("Carregando...")
+        return (<div>"Carregando..."</div>);
     }
 
     return (
