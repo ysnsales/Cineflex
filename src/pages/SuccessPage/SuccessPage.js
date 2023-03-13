@@ -10,9 +10,6 @@ let sessionsInfo = location.state.sessionsInfo;
 let numbers = location.state.numbers;
 let name = location.state.name;
 let cpf = location.state.cpf
-console.log(sessionsInfo)
-
-
 
     return (
         <PageContainer>

@@ -3,12 +3,14 @@ import HomePage from "./pages/HomePage/HomePage"
 import SeatsPage from "./pages/SeatsPage/SeatsPage"
 import SessionsPage from "./pages/SessionsPage/SessionsPage"
 import SuccessPage from "./pages/SuccessPage/SuccessPage"
+import Back from "./pages/Back"
 import { BrowserRouter, Routes, Route, Router } from "react-router-dom"
 
-
 export default function App() {
+    
     return (
         <BrowserRouter>
+            <Back/>
             <NavContainer>CINEFLEX</NavContainer>
 
             <Routes>
@@ -17,8 +19,6 @@ export default function App() {
                 <Route path="/assentos/:idSessao" element={<SeatsPage />} />
                 <Route path="/sucesso" element={<SuccessPage />} />
             </Routes>
-            {/* <SeatsPage /> */}
-            {/* <SuccessPage /> */}
         </BrowserRouter>
     )
 }

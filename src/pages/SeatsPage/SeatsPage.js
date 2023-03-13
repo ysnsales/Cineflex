@@ -22,6 +22,9 @@ export default function SeatsPage(props) {
         promiseSeat.then((response) => {
             setSessionsInfo(response.data)
         })
+        promiseSeat.catch((response) => {
+            console.log(response)
+        })
     }, [])
 
     if (sessionsInfo === null) {
@@ -46,7 +49,6 @@ export default function SeatsPage(props) {
             setNameSeats(newNameSeats)
 
         }
-        console.log(newNameSeats)
     }
 
     function ReserveSeats(e) {
@@ -55,7 +57,6 @@ export default function SeatsPage(props) {
             const ids = selectedSeats;
             const numbers = nameSeats;
             const post = { ids, name, cpf }
-            console.log(post)
 
             const promisePost = axios.post("https://mock-api.driven.com.br/api/v8/cineflex/seats/book-many", post)
             promisePost.then(response => navigate("/sucesso", { state: { sessionsInfo: sessionsInfo, numbers: numbers, name: name, cpf: cpf, } }))
@@ -72,12 +73,14 @@ export default function SeatsPage(props) {
 
             <SeatsContainer>
                 {sessionsInfo.seats.map((seat) => (
-                    <SeatItem data-test="seat" key={seat.id}
+                    <SeatItem
+                        data-test="seat" key={seat.id}
                         isAvailable={seat.isAvailable}
                         state={!seat.isAvailable ? "indisponivel" :
                             (selectedSeats.includes(seat.id) ? "selecionado" : "disponivel")}
                         onClick={() => SelectSeat(seat.isAvailable, seat.id, seat.name)}
-                    >{seat.name}</SeatItem>
+                    >{seat.name}
+                    </SeatItem>
                 ))}
             </SeatsContainer>
 
