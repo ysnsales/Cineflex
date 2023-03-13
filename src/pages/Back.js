@@ -14,7 +14,7 @@ export default  function Back(){
 }
 
 const BackContainer = styled.div`
-display: ${props => (props.route === "http://localhost:3000/" || props.route === "http://localhost:3000/sucesso") ? "none" : "flex"};  
+display: ${props => (props.route.endsWith("/") || props.route.endsWith("sucesso")) ? "none" : "flex"};  
 align-items: center;
 justify-content: center;
 background-color: #C3CFD9;
