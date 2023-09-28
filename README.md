@@ -15,8 +15,8 @@ Este projeto é uma Aplicação de Página Única (SPA) para reserva de assentos
 ## Instalação
 
 ```bash
-$ git clone https://github.com/ysnsales/Cineflex
-$ cd Cineflex
+$ git clone https://github.com/ysnsales/cineflex
+$ cd cineflex
 $ npm install
 ```
 
